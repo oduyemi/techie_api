@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session, joinedload
 from techapp import starter, models, schemas
 from techapp.schemas import UserResponse, Token, BlogResponse, BlogCategoryResponse, BlogCategoryPutResponse, BlogPutResponse, UserRequest
 from techapp import dependencies
-from techapp.dependencies import get_db, get_user_from_session, get_current_user, create_jwt_token
+from techapp.dependencies import get_db, get_user_from_session, get_current_user, create_jwt_token, get_token
 from typing import Optional, List
 from techapp.models import User, Blog, BlogCategory
 from sqlalchemy import func
@@ -387,13 +387,9 @@ async def login_user(
     return JSONResponse(content={"access_token": access_token, "token_type": "bearer"})
 
 
-
-
-
-
 @tech_starter.post("/logout")
-async def logout_user():
-    user_id = get_user_from_session()
+async def logout_user(token: str = Depends(get_token)):
+    user_id = get_user_from_session(token)
     if user_id:
         remove_user_from_session(user_id)
         return {"message": "Logout successful"}

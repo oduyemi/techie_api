@@ -25,6 +25,7 @@ def get_token(db: Session = Depends(SessionLocal), token: str = Depends(oauth2_s
 
     return token
 
+    
 def get_db():
     db = SessionLocal()
     try:
